@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.wanhe.mapper.RolePermsMapper">
+    <resultMap id="RolePermsResultMap" type="net.wanhe.model.Permission">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <result property="permName" column="perm_name" jdbcType="VARCHAR"/>
+        <result property="permission" column="permission" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getPermsByRoleId" parameterType="java.lang.Integer" resultMap="RolePermsResultMap">
+        SELECT p.*
+        FROM sys_role s
+        INNER JOIN role_perms r ON s.id=r.role_id
+        INNER JOIN sys_perm p ON r.perm_id=p.id
+        WHERE s.id=#{roleId}
+    </select>
+
+    <select id="getAllOnePerms" resultMap="RolePermsResultMap">
+        SELECT * FROM sys_perm WHERE parent_id is null
+    </select>
+
+    <select id="getPermsByParentId" resultMap="RolePermsResultMap" parameterType="java.lang.Integer">
+        SELECT * FROM sys_perm WHERE parent_id=#{parentId}
+    </select>
+
+    <resultMap id="permDtoResultMap" type="net.wanhe.dto.PermissionDto">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <id property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <id property="parentName" column="parent_name" jdbcType="VARCHAR"/>
+        <id property="permName" column="perm_name" jdbcType="VARCHAR"/>
+        <id property="permission" column="permission" jdbcType="VARCHAR"/>
+        <id property="status" column="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getAllPerms" resultMap="permDtoResultMap">
+        SELECT s.id,p.perm_name parent_name,s.perm_name,s.permission,s.status
+        FROM sys_perm s
+        LEFT JOIN sys_perm p ON s.parent_id=p.id
+    </select>
+
+    <delete id="deleteRolePermReferenceByRoleId" parameterType="java.lang.Integer">
+        DELETE FROM role_perms WHERE role_id=#{id}
+    </delete>
+
+    <insert id="addRolePermReference" parameterType="java.lang.Integer">
+        INSERT INTO role_perms VALUES(NULL,#{roleId},#{permId})
+    </insert>
+
+    <delete id="deletePermById" parameterType="java.lang.Integer">
+        DELETE FROM sys_perm WHERE id=#{id}
+    </delete>
+
+    <select id="getPermsById" parameterType="java.lang.Integer">
+        SELECT * FROM sys_perm WHERE parent_id=#{id}
+    </select>
+
+    <delete id="deleteRolePermReferenceByPermId" parameterType="java.lang.Integer">
+        DELETE FROM role_perms WHERE perm_id=#{permId}
+    </delete>
+
+    <select id="getPermById" parameterType="java.lang.Integer" resultMap="permDtoResultMap">
+        SELECT s.id,s.parent_id,p.perm_name parent_name,s.perm_name,s.permission,s.status
+        FROM sys_perm s
+        LEFT JOIN sys_perm p ON s.parent_id=p.id
+        WHERE s.id=#{id}
+    </select>
+
+    <update id="updatePerm" parameterType="net.wanhe.model.Permission">
+        UPDATE sys_perm
+        SET parent_id=#{parentId},perm_name=#{permName},permission=#{permission},status=#{status}
+        WHERE id=#{id}
+    </update>
+
+    <resultMap id="PermResultMap" type="net.wanhe.dto.PermZtreeDto">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="VARCHAR"/>
+        <result property="permName" column="perm_name" jdbcType="VARCHAR"/>
+        <result property="permission" column="permission" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="getAllPermission" resultMap="PermResultMap">
+        SELECT * FROM sys_perm
+    </select>
+</mapper>

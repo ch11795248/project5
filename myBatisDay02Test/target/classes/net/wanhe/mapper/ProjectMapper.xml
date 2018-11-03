@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.wanhe.mapper.ProjectMapper">
+
+    <resultMap id="projectResultMap" type="net.wanhe.model.Project">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getProjectById" resultMap="projectResultMap">
+        SELECT * FROM project WHERE id=#{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.wanhe.dao.StudentMapper">
+    <resultMap id="studentRusultMap" type="net.wanhe.model.Student">
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="id" column="id"/>
+    </resultMap>
+
+    <insert id="addStudent" parameterType="net.wanhe.model.Student">
+        INSERT INTO student VALUES(NULL,#{name},#{age})
+    </insert>
+
+    <delete id="deleteStudent" parameterType="java.lang.Integer">
+        DELETE FROM student WHERE id=#{id}
+    </delete>
+
+    <update id="updateStudent" parameterType="net.wanhe.model.Student">
+        UPDATE student SET NAME=#{name},age=#{age} WHERE id=#{id}
+    </update>
+
+    <select id="getStudentById" parameterType="Integer" resultType="net.wanhe.model.Student">
+        SELECT * FROM student WHERE id=#{id}
+    </select>
+
+    <select id="getAllStudents" resultMap="studentRusultMap">
+        select * from student;
+    </select>
+</mapper>

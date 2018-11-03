@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.wanhe.mapper.UserRolesMapper">
+
+    <resultMap id="roleResultMap" type="net.wanhe.model.Role">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="role" column="role" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getAllRoles" resultMap="roleResultMap">
+        SELECT * FROM sys_role
+    </select>
+
+    <select id="getUserRolesByAccount" parameterType="java.lang.String" resultType="net.wanhe.model.Role">
+        SELECT s.*
+        FROM sys_users u
+        LEFT JOIN user_role ur ON u.ID=ur.user_id
+        LEFT JOIN sys_role s ON s.ID=ur.role_id
+        WHERE u.USER_ACCOUNT=#{userAccount}
+    </select>
+
+    <delete id="deleteUserRolesByUserId" parameterType="java.lang.Integer">
+        DELETE FROM user_role WHERE user_id=#{userId}
+    </delete>
+
+    <insert id="addUserRoles" parameterType="java.lang.Integer">
+        INSERT INTO user_role VALUES(NULL,#{userId},#{roleId})
+    </insert>
+</mapper>

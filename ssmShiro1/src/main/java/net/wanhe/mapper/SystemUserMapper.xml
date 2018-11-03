@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.wanhe.mapper.SystemUserMapper">
+    <resultMap id="systemUserResultMap" type="net.wanhe.model.SystemUser">
+        <id property="id" column="ID" jdbcType="INTEGER"/>
+        <result property="userAccount" column="USER_ACCOUNT" jdbcType="VARCHAR"/>
+        <result property="userName" column="USER_NAME" jdbcType="VARCHAR"/>
+        <result property="password" column="PASSWORD" jdbcType="VARCHAR"/>
+        <result property="salt" column="SALT" jdbcType="VARCHAR"/>
+        <result property="status" column="STATUS" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="addUser" parameterType="net.wanhe.model.SystemUser">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO sys_users VALUES(NULL,#{userAccount},#{userName},#{password},#{salt},#{status})
+    </insert>
+
+    <select id="getUserByAccount" parameterType="java.lang.String" resultMap="systemUserResultMap">
+        SELECT * FROM sys_users WHERE USER_ACCOUNT=#{userAccount}
+    </select>
+
+    <select id="getAllUsers" resultMap="systemUserResultMap" parameterType="java.lang.String">
+        SELECT * FROM sys_users WHERE 1=1
+        <if test="null != userAccount">
+            AND USER_ACCOUNT LIKE concat('%',#{userAccount},'%')
+        </if>
+        <if test="null != userName">
+            AND USER_NAME LIKE concat('%',#{userName},'%')
+        </if>
+    </select>
+
+    <update id="updateUserStatusById" parameterType="net.wanhe.model.SystemUser">
+        UPDATE sys_users SET STATUS=#{status} WHERE ID=#{id}
+    </update>
+</mapper>
